@@ -1,29 +1,213 @@
-# GOODMUSIC
+# GoodMusic
 
-Progetto del corso di Analisi e progettazione del software per l'anno accademico 2024-2025. 
+**GoodMusic** is a university project developed for the course **Software Analysis and Design** during the 2024–2025 academic year.
 
-Il progetto presenta un uso di tecnologie come:
+The project is designed as a **microservices-based distributed system**, with the goal of exploring modern software architectures, service communication, scalability and containerized deployment.
 
-    1.Consul per la scoperta dei servizi
-    2.Kafka per la comunicazione asincrona
-    3.Postgres per la gestione dei dati persistenti per ogni microservizio ad eccezione del microservizio "filtro"
-    4.Docker per la containerizzazione dei servizi
-    5.Docker compose per l'orchestrazione dei container e delle sue repliche
-    6.Kubernetes per l'orchestrazione di container e delle sue repliche
-    7.Framework Spring Cloud Gateway per l'instradamento delle rotte (già presente)
-    8.Libreria Spring Cloud Load Balancer per la gestione del carico di lavoro per ogni replica dei microservizi
+## Overview
 
-L'architettura proposta si basa su una serie di tecnologie moderne e scalabili che permettono la costruzione di un sistema robusto e facilmente manutenibile. Tuttavia, come con ogni soluzione, ci sono pro e contro che devono essere valutati in base alle specifiche necessità e al carico di lavoro dell'applicazione.
+The system is divided into multiple independent services, each responsible for a specific domain of the application.
 
-    Punti di Forza:
-        Scalabilità: L'uso di Kafka e la containerizzazione via Docker offrono un'ottima base per la scalabilità.
-        Affidabilità: Grazie a Spring Cloud e Consul, la scoperta dei servizi e la gestione dei fallimenti è semplificata.
-        Modularità: I microservizi permettono una gestione separata delle diverse funzionalità (Connessioni, Recensioni, Filtro), aumentando la manutenibilità.
+Main modules include:
 
-    Aree di Miglioramento:
-        Single Point of Failure: Il sistema dipende fortemente da Consul e dal Kafka broker, che potrebbero diventare un collo di bottiglia o punto di fallimento.
-        Gestione della Complessità: La configurazione e il monitoraggio di un sistema basato su numerosi microservizi, ciascuno con un proprio database, possono risultare complessi.
-        Performance: Sebbene Kafka sia estremamente potente, il tempo di latenza nella comunicazione tra microservizi asincroni potrebbe essere un fattore limitante in scenari ad alta performance.
+* API Gateway
+* Connections
+* Connections API
+* Reviews
+* Reviews API
+* Followed Reviews
+* Filter
+* Kafka integration
 
-L'adozione di una soluzione come questa è particolarmente vantaggiosa per sistemi che necessitano di un alto livello di scalabilità e resilienza, ma richiede un'attenta gestione e monitoraggio per evitare problemi legati alla complessità e al mantenimento delle dipendenze tra i vari componenti.	
-	
+The architecture follows a distributed approach in which services can communicate both synchronously and asynchronously.
+
+## Architecture
+
+The project adopts a **microservices architecture**.
+
+Each service is designed to be independently deployable and scalable, while communication between services is handled through REST APIs and asynchronous messaging.
+
+The system includes:
+
+* Service discovery
+* API routing
+* Load balancing
+* Asynchronous communication
+* Independent persistence
+* Container orchestration
+
+## Technologies
+
+### Backend
+
+* Java
+* Spring Boot
+* Spring Cloud Gateway
+* Spring Cloud LoadBalancer
+* Gradle
+
+### Service Discovery
+
+* Consul
+
+Consul is used for service discovery, allowing microservices to dynamically register and locate other services within the system.
+
+### Messaging
+
+* Apache Kafka
+
+Kafka is used for asynchronous communication between different parts of the architecture.
+
+This helps decouple services and allows events to be processed independently.
+
+### Database
+
+* PostgreSQL
+
+Each microservice manages its own persistent data through a dedicated PostgreSQL database, with the exception of the `filtro` service.
+
+This approach supports data isolation between services.
+
+### Containerization
+
+* Docker
+* Docker Compose
+
+Docker is used to containerize the services, while Docker Compose is used to manage and orchestrate multiple containers locally.
+
+### Orchestration
+
+* Kubernetes
+
+Kubernetes is used to manage container orchestration and service replicas, providing support for scalability and resilience.
+
+## API Gateway
+
+The system includes an API Gateway built with **Spring Cloud Gateway**.
+
+The gateway acts as the main entry point for client requests and is responsible for routing traffic toward the appropriate microservice.
+
+## Load Balancing
+
+**Spring Cloud LoadBalancer** is used to distribute requests across multiple replicas of the same service.
+
+This allows the architecture to handle increased workloads and improve service availability.
+
+## Asynchronous Communication
+
+Apache Kafka is used to enable event-driven communication between microservices.
+
+This approach reduces direct dependencies between services and improves the overall modularity of the system.
+
+## Project Structure
+
+```text
+GoodMusic/
+│
+├── api-gateway/
+├── connessioni/
+├── connessioni-api/
+├── filtro/
+├── kafka/
+├── recensioni/
+├── recensioni-api/
+├── recensioni-seguite/
+│
+├── docker-compose.yml
+├── build.gradle
+├── settings.gradle
+└── README.md
+```
+
+## Strengths of the Architecture
+
+### Scalability
+
+The use of microservices, Kafka and containerization allows individual components to be scaled independently according to workload.
+
+### Modularity
+
+Each microservice is responsible for a specific part of the system.
+
+This makes the application easier to maintain, test and extend.
+
+### Service Discovery
+
+Consul simplifies communication between services by dynamically managing service registration and discovery.
+
+### Resilience
+
+Container replication and distributed services can improve availability and reduce the impact of failures affecting individual components.
+
+## Architectural Challenges
+
+The architecture also introduces several challenges.
+
+### Increased Complexity
+
+A distributed architecture requires more configuration, monitoring and coordination compared with a monolithic application.
+
+### Single Points of Failure
+
+Components such as Consul or the Kafka broker may become critical infrastructure dependencies if redundancy is not properly configured.
+
+### Communication Latency
+
+Asynchronous messaging introduces additional communication overhead compared with direct in-process communication.
+
+### Distributed Data Management
+
+Each microservice managing its own database improves isolation but introduces additional complexity in maintaining consistency across the system.
+
+## Running the Project
+
+Clone the repository:
+
+```bash
+git clone https://github.com/thomas930821/GoodMusic.git
+```
+
+Enter the project directory:
+
+```bash
+cd GoodMusic
+```
+
+Start the services using Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Depending on the local environment, additional configuration may be required for Consul, Kafka and PostgreSQL.
+
+## Project Goals
+
+The purpose of this project was to explore the design and implementation of distributed software systems using modern backend technologies.
+
+In particular, the project focuses on:
+
+* Microservices architecture
+* Distributed systems
+* Service discovery
+* API Gateway patterns
+* Asynchronous communication
+* Event-driven architecture
+* Containerization
+* Load balancing
+* Service scalability
+* Independent data persistence
+
+## Academic Project
+
+This project was developed as part of the **Software Analysis and Design** course during the **2024–2025 academic year**.
+
+It represents a practical application of architectural concepts related to distributed systems, microservices and scalable software design.
+
+## Author
+
+**Thomas Farinelli**
+
+Computer Science Student
+
+GitHub: [thomas930821](https://github.com/thomas930821)
